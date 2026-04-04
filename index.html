@@ -11,14 +11,14 @@
     :root {
       --primary: #116682;
       --primary-dark: #0d4f64;
-      --primary-light: #bde9ff;
       --surface: #f6fafd;
-      --surface-variant: #e4e9ec;
+      --surface-variant: #e8f4f8;
       --on-surface: #171c1f;
       --on-surface-variant: #40484c;
       --outline: #c0c8cd;
       --error: #ba1a1a;
-      --radius: 12px;
+      --success: #1a7e34;
+      --radius: 14px;
       --radius-sm: 8px;
     }
 
@@ -31,14 +31,24 @@
       line-height: 1.5;
     }
 
-    /* ── Login ── */
-    #login-screen {
+    /* ── Loading ── */
+    #loading-screen {
       min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: var(--primary);
-      background-image: linear-gradient(135deg, #0d4f64 0%, #116682 60%, #1a8aad 100%);
+      flex-direction: column;
+      gap: 12px;
+      color: var(--on-surface-variant);
+    }
+
+    /* ── Login ── */
+    #login-screen {
+      min-height: 100vh;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0d4f64 0%, #116682 60%, #1a8aad 100%);
     }
 
     .login-card {
@@ -54,34 +64,27 @@
       gap: 16px;
     }
 
-    .login-logo { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+    .login-logo { font-size: 26px; font-weight: 700; color: var(--primary); }
     .login-logo span { color: #1a8aad; }
+    .login-card h1 { font-size: 20px; font-weight: 600; }
     .login-subtitle { color: var(--on-surface-variant); font-size: 13px; text-align: center; }
 
-    .login-card h1 { font-size: 20px; font-weight: 600; margin-top: 4px; }
-
     .google-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      display: flex; align-items: center; gap: 10px;
       padding: 11px 20px;
       border: 1.5px solid var(--outline);
       border-radius: 100px;
-      background: white;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      width: 100%;
-      justify-content: center;
+      background: white; cursor: pointer;
+      font-size: 14px; font-weight: 500;
+      width: 100%; justify-content: center;
       margin-top: 8px;
       transition: background 0.15s, border-color 0.15s;
       color: var(--on-surface);
     }
     .google-btn:hover { background: var(--surface); border-color: var(--primary); }
     .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .google-btn svg { flex-shrink: 0; }
 
-    /* ── Layout ── */
+    /* ── Header ── */
     #admin-screen { display: none; }
 
     header {
@@ -89,254 +92,265 @@
       color: white;
       padding: 0 32px;
       height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 10;
       box-shadow: 0 2px 8px rgba(0,0,0,0.15);
     }
 
-    .header-brand { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+    .header-brand { font-size: 16px; font-weight: 600; }
     .header-right { display: flex; align-items: center; gap: 12px; }
     .header-user { font-size: 13px; opacity: 0.85; }
 
     .sign-out-btn {
       background: rgba(255,255,255,0.15);
       border: 1px solid rgba(255,255,255,0.3);
-      color: white;
-      border-radius: 100px;
-      padding: 6px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      transition: background 0.15s;
+      color: white; border-radius: 100px;
+      padding: 6px 14px; font-size: 13px;
+      cursor: pointer; transition: background 0.15s;
     }
     .sign-out-btn:hover { background: rgba(255,255,255,0.25); }
 
-    main {
-      max-width: 720px;
-      margin: 40px auto;
-      padding: 0 24px 80px;
-    }
+    /* ── Main ── */
+    main { max-width: 960px; margin: 36px auto; padding: 0 24px 80px; }
 
     .page-title { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
-    .page-subtitle { color: var(--on-surface-variant); font-size: 13px; margin-bottom: 32px; }
+    .page-subtitle { color: var(--on-surface-variant); font-size: 13px; margin-bottom: 28px; }
+
+    /* ── Status ── */
+    .status-bar {
+      padding: 12px 16px; border-radius: var(--radius-sm);
+      font-size: 13px; font-weight: 500;
+      display: none; margin-bottom: 20px;
+    }
+    .status-bar.success { display: block; background: #e6f4ea; color: var(--success); border: 1px solid #b2dfbc; }
+    .status-bar.error   { display: block; background: #fdecea; color: var(--error);   border: 1px solid #f5c6c8; }
+
+    /* ── Grid ── */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
 
     /* ── Cards ── */
     .card {
       background: white;
       border-radius: var(--radius);
       border: 1px solid var(--outline);
-      margin-bottom: 20px;
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
+
+    .card.full { grid-column: 1 / -1; }
 
     .card-header {
-      padding: 16px 20px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--outline);
-      font-weight: 600;
-      font-size: 14px;
+      font-weight: 600; font-size: 13px;
       color: var(--primary);
-      background: #f0f8fc;
+      background: var(--surface-variant);
+      letter-spacing: 0.1px;
     }
 
-    .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+    .card-body {
+      padding: 18px;
+      display: flex; flex-direction: column;
+      gap: 14px; flex: 1;
+    }
 
-    /* ── Form ── */
+    /* ── Fields ── */
     .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label { font-size: 12px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.5px; }
+    .field label { font-size: 11px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .field input[type="text"],
-    .field input[type="url"],
-    .field input[type="color"] {
+    .field input[type="text"] {
       border: 1.5px solid var(--outline);
       border-radius: var(--radius-sm);
-      padding: 9px 12px;
-      font-size: 14px;
-      color: var(--on-surface);
-      background: white;
-      outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
+      padding: 9px 12px; font-size: 14px;
+      color: var(--on-surface); background: white;
+      outline: none; transition: border-color 0.15s; width: 100%;
     }
-    .field input:focus { border-color: var(--primary); }
-
-    .field input[type="color"] {
-      padding: 4px 6px;
-      height: 38px;
-      cursor: pointer;
-    }
-
-    .color-row { display: flex; align-items: center; gap: 10px; }
-    .color-row input[type="text"] { flex: 1; }
-    .color-row input[type="color"] { width: 48px; flex-shrink: 0; }
-
+    .field input[type="text"]:focus { border-color: var(--primary); }
     .field-hint { font-size: 11px; color: var(--on-surface-variant); }
+
+    /* ── Upload ── */
+    .upload-area {
+      border: 2px dashed var(--outline);
+      border-radius: var(--radius-sm);
+      padding: 20px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      position: relative;
+    }
+    .upload-area:hover { border-color: var(--primary); background: #f0f8fc; }
+    .upload-area input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 28px; margin-bottom: 6px; }
+    .upload-label { font-size: 12px; color: var(--on-surface-variant); }
+    .upload-label strong { color: var(--primary); }
+
+    .preview-wrap { position: relative; }
+    .preview-img {
+      width: 100%; height: 120px; object-fit: contain;
+      border-radius: var(--radius-sm); border: 1px solid var(--outline);
+      background: var(--surface);
+    }
+    .preview-img.bg-preview { object-fit: cover; }
+    .remove-preview {
+      position: absolute; top: 6px; right: 6px;
+      background: rgba(0,0,0,0.5); color: white;
+      border: none; border-radius: 50%;
+      width: 22px; height: 22px; font-size: 14px; line-height: 1;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .uploading-label { font-size: 12px; color: var(--primary); text-align: center; }
 
     /* ── Toggle ── */
     .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 0;
+      display: flex; align-items: center;
+      justify-content: space-between; gap: 12px;
+      flex: 1;
     }
-    .toggle-label { font-size: 14px; }
-    .toggle-desc { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+    .toggle-text .toggle-label { font-size: 14px; font-weight: 500; }
+    .toggle-text .toggle-desc { font-size: 12px; color: var(--on-surface-variant); margin-top: 3px; }
 
-    .toggle {
-      position: relative;
-      width: 44px;
-      height: 24px;
-      flex-shrink: 0;
-    }
+    .toggle { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
     .toggle input { opacity: 0; width: 0; height: 0; }
     .toggle-track {
-      position: absolute;
-      inset: 0;
-      background: var(--outline);
-      border-radius: 100px;
-      cursor: pointer;
-      transition: background 0.2s;
+      position: absolute; inset: 0;
+      background: var(--outline); border-radius: 100px;
+      cursor: pointer; transition: background 0.2s;
     }
     .toggle-track::after {
-      content: '';
-      position: absolute;
-      width: 18px; height: 18px;
-      left: 3px; top: 3px;
-      background: white;
-      border-radius: 50%;
+      content: ''; position: absolute;
+      width: 18px; height: 18px; left: 3px; top: 3px;
+      background: white; border-radius: 50%;
       transition: transform 0.2s;
       box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     }
     .toggle input:checked + .toggle-track { background: var(--primary); }
     .toggle input:checked + .toggle-track::after { transform: translateX(20px); }
 
-    /* ── Links list ── */
+    /* ── Links ── */
     .links-list { display: flex; flex-direction: column; gap: 8px; }
-
     .link-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto;
-      gap: 8px;
-      align-items: center;
+      display: grid; grid-template-columns: 1fr 1fr auto;
+      gap: 8px; align-items: center;
     }
-
     .link-row input {
-      border: 1.5px solid var(--outline);
-      border-radius: var(--radius-sm);
-      padding: 8px 10px;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.15s;
-      width: 100%;
+      border: 1.5px solid var(--outline); border-radius: var(--radius-sm);
+      padding: 8px 10px; font-size: 13px; outline: none;
+      transition: border-color 0.15s; width: 100%;
     }
     .link-row input:focus { border-color: var(--primary); }
 
     .remove-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--on-surface-variant);
-      font-size: 18px;
-      line-height: 1;
-      padding: 4px;
-      border-radius: 4px;
-      transition: color 0.15s;
+      background: none; border: none; cursor: pointer;
+      color: var(--on-surface-variant); font-size: 18px;
+      padding: 4px; border-radius: 4px; transition: color 0.15s;
     }
     .remove-btn:hover { color: var(--error); }
 
     .add-link-btn {
-      background: none;
-      border: 1.5px dashed var(--outline);
-      border-radius: var(--radius-sm);
-      color: var(--primary);
-      font-size: 13px;
-      font-weight: 500;
-      padding: 8px;
-      cursor: pointer;
-      width: 100%;
+      background: none; border: 1.5px dashed var(--outline);
+      border-radius: var(--radius-sm); color: var(--primary);
+      font-size: 13px; font-weight: 500; padding: 8px;
+      cursor: pointer; width: 100%;
       transition: border-color 0.15s, background 0.15s;
       margin-top: 4px;
     }
     .add-link-btn:hover { border-color: var(--primary); background: #f0f8fc; }
 
-    /* ── Actions ── */
-    .actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 8px;
+    /* ── Notifications ── */
+    .notif-compose textarea {
+      width: 100%; border: 1.5px solid var(--outline);
+      border-radius: var(--radius-sm); padding: 10px 12px;
+      font-size: 14px; font-family: inherit;
+      resize: vertical; min-height: 90px; outline: none;
+      transition: border-color 0.15s;
+    }
+    .notif-compose textarea:focus { border-color: var(--primary); }
+    .notif-compose textarea::placeholder { color: #aaa; }
+
+    .notif-send-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .char-count { font-size: 12px; color: var(--on-surface-variant); }
+
+    .active-notif {
+      background: #e8f4f8; border: 1px solid #9dd0e5;
+      border-radius: var(--radius-sm); padding: 12px 14px;
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+    }
+    .active-notif-text { font-size: 13px; color: var(--on-surface); flex: 1; }
+    .active-notif-meta { font-size: 11px; color: var(--on-surface-variant); margin-top: 4px; }
+    .clear-notif-btn {
+      background: none; border: 1px solid var(--outline);
+      border-radius: 6px; padding: 4px 10px;
+      font-size: 12px; cursor: pointer; color: var(--on-surface-variant);
+      white-space: nowrap; transition: border-color 0.15s, color 0.15s;
+    }
+    .clear-notif-btn:hover { border-color: var(--error); color: var(--error); }
+
+    .section-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.5px;
+      color: var(--on-surface-variant); margin-bottom: 2px;
     }
 
+    /* ── Actions ── */
+    .actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+
     .btn-primary {
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 100px;
-      padding: 10px 24px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
+      background: var(--primary); color: white; border: none;
+      border-radius: 100px; padding: 10px 28px;
+      font-size: 14px; font-weight: 600; cursor: pointer;
       transition: background 0.15s;
     }
     .btn-primary:hover { background: var(--primary-dark); }
     .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
 
-    /* ── Status ── */
-    .status-bar {
-      padding: 10px 16px;
-      border-radius: var(--radius-sm);
-      font-size: 13px;
-      font-weight: 500;
-      display: none;
-      margin-bottom: 16px;
+    .btn-secondary {
+      background: white; color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 100px; padding: 8px 20px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s;
     }
-    .status-bar.success { display: block; background: #e6f4ea; color: #1e7e34; border: 1px solid #b2dfbc; }
-    .status-bar.error { display: block; background: #fdecea; color: var(--error); border: 1px solid #f5c6c8; }
-
-    /* ── No company ── */
-    .no-company {
-      text-align: center;
-      padding: 60px 20px;
-      color: var(--on-surface-variant);
-    }
-    .no-company h2 { font-size: 18px; margin-bottom: 8px; color: var(--on-surface); }
-    .no-company p { font-size: 13px; }
+    .btn-secondary:hover { background: #f0f8fc; }
+    .btn-secondary:disabled { opacity: 0.6; cursor: not-allowed; }
 
     /* ── Spinner ── */
     .spinner {
       width: 18px; height: 18px;
       border: 2px solid rgba(255,255,255,0.4);
-      border-top-color: white;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      display: inline-block;
+      border-top-color: white; border-radius: 50%;
+      animation: spin 0.7s linear infinite; display: inline-block;
     }
+    .spinner.dark { border-color: var(--outline); border-top-color: var(--primary); }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    .loading-screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 12px;
-      color: var(--on-surface-variant);
+    /* ── No company ── */
+    .no-company { text-align: center; padding: 60px 20px; color: var(--on-surface-variant); }
+    .no-company h2 { font-size: 18px; margin-bottom: 8px; color: var(--on-surface); }
+
+    @media (max-width: 680px) {
+      .settings-grid { grid-template-columns: 1fr; }
+      .card.full { grid-column: 1; }
     }
-    .loading-screen .spinner { border-color: var(--outline); border-top-color: var(--primary); }
   </style>
 </head>
 <body>
 
 <!-- Loading -->
-<div id="loading-screen" class="loading-screen">
-  <div class="spinner"></div>
+<div id="loading-screen">
+  <div class="spinner dark"></div>
   <span>Loading…</span>
 </div>
 
 <!-- Login -->
-<div id="login-screen" style="display:none">
+<div id="login-screen">
   <div class="login-card">
     <div class="login-logo">elliot<span>forwater</span></div>
     <h1>Company Admin</h1>
@@ -354,7 +368,7 @@
 </div>
 
 <!-- Admin -->
-<div id="admin-screen" style="display:none">
+<div id="admin-screen">
   <header>
     <div class="header-brand">Elliot for Water — Admin</div>
     <div class="header-right">
@@ -364,7 +378,7 @@
   </header>
 
   <main>
-    <div class="page-title" id="page-title">Company Settings</div>
+    <div class="page-title">Company Settings</div>
     <div class="page-subtitle" id="page-subtitle"></div>
 
     <div id="status-bar" class="status-bar"></div>
@@ -373,31 +387,34 @@
 </div>
 
 <script>
-  const SUPABASE_URL = 'https://kkttgbsrsfoozetfxpau.supabase.co';
-  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdHRnYnNyc2Zvb3pldGZ4cGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTA0MjYsImV4cCI6MjA5MDY4NjQyNn0.3G6VDnLQvJjGBQitaCPSH8Te3avlvGPirjwYYU3TLGg';
+  const SUPABASE_URL  = 'https://kkttgbsrsfoozetfxpau.supabase.co';
+  const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdHRnYnNyc2Zvb3pldGZ4cGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTA0MjYsImV4cCI6MjA5MDY4NjQyNn0.3G6VDnLQvJjGBQitaCPSH8Te3avlvGPirjwYYU3TLGg';
+  const BUCKET        = 'company-assets';
 
   const { createClient } = supabase;
-  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true },
   });
 
   let currentUser = null;
   let companyData = null;
-  let links = [];
+  let links       = [];
+  let logoFile    = null;
+  let bgFile      = null;
+  let activeNotif = null;
 
   // ── Screens ──────────────────────────────────────────
   function show(id) {
-    ['loading-screen', 'login-screen', 'admin-screen'].forEach(s => {
-      document.getElementById(s).style.display = s === id ? (id === 'admin-screen' ? 'block' : 'flex') : 'none';
-    });
-    if (id === 'loading-screen') document.getElementById('loading-screen').style.display = 'flex';
+    document.getElementById('loading-screen').style.display = id === 'loading-screen' ? 'flex' : 'none';
+    document.getElementById('login-screen').style.display   = id === 'login-screen'   ? 'flex' : 'none';
+    document.getElementById('admin-screen').style.display   = id === 'admin-screen'   ? 'block' : 'none';
   }
 
   // ── Auth ─────────────────────────────────────────────
   async function signIn() {
     const btn = document.getElementById('google-btn');
     btn.disabled = true;
-    btn.innerHTML = '<div class="spinner" style="border-color:#ddd;border-top-color:#116682"></div> Signing in…';
+    btn.innerHTML = '<div class="spinner" style="border-color:#ddd;border-top-color:#116682;width:16px;height:16px"></div> Signing in…';
     await db.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: 'https://andre4w.github.io/elliot-admin' },
@@ -406,9 +423,7 @@
 
   async function signOut() {
     await db.auth.signOut();
-    currentUser = null;
-    companyData = null;
-    links = [];
+    currentUser = null; companyData = null; links = []; logoFile = null; bgFile = null;
     show('login-screen');
   }
 
@@ -416,197 +431,313 @@
   async function boot() {
     show('loading-screen');
     const { data: { session } } = await db.auth.getSession();
-    if (session?.user) {
-      await loadAdmin(session.user);
-    } else {
-      show('login-screen');
-    }
+    if (session?.user) await loadAdmin(session.user);
+    else show('login-screen');
   }
 
   db.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_IN' && session?.user && !currentUser) {
-      await loadAdmin(session.user);
-    } else if (event === 'SIGNED_OUT') {
-      show('login-screen');
-    }
+    if (event === 'SIGNED_IN' && session?.user && !currentUser) await loadAdmin(session.user);
+    else if (event === 'SIGNED_OUT') show('login-screen');
   });
 
-  // ── Load company ──────────────────────────────────────
+  // ── Load ─────────────────────────────────────────────
   async function loadAdmin(user) {
     currentUser = user;
-    document.getElementById('header-user').textContent =
-      user.user_metadata?.full_name || user.email;
+    document.getElementById('header-user').textContent = user.user_metadata?.full_name || user.email;
     show('admin-screen');
 
     const domain = user.email.split('@')[1];
-    document.getElementById('page-subtitle').textContent =
-      `Managing settings for @${domain}`;
+    document.getElementById('page-subtitle').textContent = `Managing settings for @${domain}`;
 
-    const { data, error } = await db
-      .from('companies')
-      .select('*')
-      .eq('email_domain', domain)
-      .single();
+    const [companyRes, notifRes] = await Promise.all([
+      db.from('companies').select('*').eq('email_domain', domain).single(),
+      db.from('notifications').select('*').eq('email_domain', domain).eq('active', true).order('created_at', { ascending: false }).limit(1),
+    ]);
 
-    if (error && error.code !== 'PGRST116') {
-      renderNoCompany(`Error loading company: ${error.message}`);
-      return;
+    if (companyRes.error && companyRes.error.code !== 'PGRST116') {
+      renderNoCompany(`Error: ${companyRes.error.message}`); return;
     }
 
-    companyData = data || { email_domain: domain };
-    links = Array.isArray(companyData.default_links) ? companyData.default_links : [];
+    companyData = companyRes.data || { email_domain: domain };
+    links       = Array.isArray(companyData.default_links) ? companyData.default_links : [];
+    activeNotif = notifRes.data?.[0] || null;
     renderForm();
   }
 
   function renderNoCompany(msg) {
-    document.getElementById('company-form').innerHTML = `
-      <div class="no-company">
-        <h2>No company found</h2>
-        <p>${msg || 'Your email domain is not associated with any company in the system.'}</p>
-      </div>`;
+    document.getElementById('company-form').innerHTML =
+      `<div class="no-company"><h2>No company found</h2><p>${msg}</p></div>`;
   }
 
   // ── Form ─────────────────────────────────────────────
   function renderForm() {
-    const f = document.getElementById('company-form');
     const c = companyData;
+    document.getElementById('company-form').innerHTML = `
 
-    f.innerHTML = `
-      <!-- General -->
-      <div class="card">
-        <div class="card-header">General</div>
-        <div class="card-body">
-          <div class="field">
-            <label>Company Name</label>
-            <input type="text" id="f-name" value="${esc(c.name || '')}" placeholder="Acme Corp" />
-          </div>
-          <div class="field">
-            <label>Logo URL</label>
-            <input type="url" id="f-logo" value="${esc(c.logo_url || '')}" placeholder="https://example.com/logo.png" />
-            <span class="field-hint">Displayed in the extension header for your team.</span>
+      <div class="settings-grid">
+
+        <!-- Company Name -->
+        <div class="card">
+          <div class="card-header">Company Name</div>
+          <div class="card-body">
+            <div class="field">
+              <label>Name</label>
+              <input type="text" id="f-name" value="${esc(c.name || '')}" placeholder="Acme Corp" />
+            </div>
+            <div class="field-hint">Displayed to your team in the extension.</div>
           </div>
         </div>
-      </div>
 
-      <!-- Appearance -->
-      <div class="card">
-        <div class="card-header">Appearance</div>
-        <div class="card-body">
-          <div class="field">
-            <label>Accent Color</label>
-            <div class="color-row">
-              <input type="text" id="f-accent-text" value="${esc(c.accent_color || '#116682')}" placeholder="#116682" oninput="syncColor('text')" />
-              <input type="color" id="f-accent-color" value="${esc(c.accent_color || '#116682')}" oninput="syncColor('picker')" />
+        <!-- Logo -->
+        <div class="card">
+          <div class="card-header">Company Logo</div>
+          <div class="card-body">
+            <div id="logo-preview-wrap" style="display:${c.logo_url ? 'block' : 'none'}" class="preview-wrap">
+              <img id="logo-preview" class="preview-img" src="${esc(c.logo_url || '')}" alt="Logo" />
+              <button class="remove-preview" onclick="clearLogo()" title="Remove">×</button>
+            </div>
+            <div id="logo-upload-area" class="upload-area" style="display:${c.logo_url ? 'none' : 'flex'}; flex-direction:column; align-items:center;">
+              <input type="file" accept="image/*" onchange="onLogoChange(event)" />
+              <div class="upload-icon">🖼️</div>
+              <div class="upload-label"><strong>Click to upload</strong> your logo<br>PNG, JPG, SVG</div>
+            </div>
+            <div id="logo-uploading" class="uploading-label" style="display:none">Uploading…</div>
+          </div>
+        </div>
+
+        <!-- Background -->
+        <div class="card">
+          <div class="card-header">Background Image</div>
+          <div class="card-body">
+            <div id="bg-preview-wrap" style="display:${c.background_url ? 'block' : 'none'}" class="preview-wrap">
+              <img id="bg-preview" class="preview-img bg-preview" src="${esc(c.background_url || '')}" alt="Background" />
+              <button class="remove-preview" onclick="clearBg()" title="Remove">×</button>
+            </div>
+            <div id="bg-upload-area" class="upload-area" style="display:${c.background_url ? 'none' : 'flex'}; flex-direction:column; align-items:center;">
+              <input type="file" accept="image/*" onchange="onBgChange(event)" />
+              <div class="upload-icon">🌄</div>
+              <div class="upload-label"><strong>Click to upload</strong> a background<br>PNG, JPG, WebP</div>
+            </div>
+            <div id="bg-uploading" class="uploading-label" style="display:none">Uploading…</div>
+          </div>
+        </div>
+
+        <!-- Hide Sponsor Widget -->
+        <div class="card">
+          <div class="card-header">Widgets</div>
+          <div class="card-body" style="justify-content:center">
+            <div class="toggle-row">
+              <div class="toggle-text">
+                <div class="toggle-label">Hide Sponsor Widget</div>
+                <div class="toggle-desc">Remove the sponsor of the day for your team.</div>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" id="f-hide-sponsor" ${c.hide_sponsor_widget ? 'checked' : ''} />
+                <div class="toggle-track"></div>
+              </label>
             </div>
           </div>
-          <div class="field">
-            <label>Background Image URL</label>
-            <input type="url" id="f-bg" value="${esc(c.background_url || '')}" placeholder="https://example.com/background.jpg" />
-            <span class="field-hint">Overrides the default background for your team.</span>
-          </div>
         </div>
+
       </div>
 
-      <!-- Widgets -->
-      <div class="card">
-        <div class="card-header">Widgets</div>
-        <div class="card-body">
-          <div class="toggle-row">
-            <div>
-              <div class="toggle-label">Hide Sponsor Widget</div>
-              <div class="toggle-desc">Remove the sponsor of the day widget for your team.</div>
-            </div>
-            <label class="toggle">
-              <input type="checkbox" id="f-hide-sponsor" ${c.hide_sponsor_widget ? 'checked' : ''} />
-              <div class="toggle-track"></div>
-            </label>
-          </div>
-        </div>
-      </div>
-
-      <!-- Default Links -->
-      <div class="card">
+      <!-- Default Links (full width) -->
+      <div class="card full" style="margin-bottom:16px">
         <div class="card-header">Default Links</div>
         <div class="card-body">
-          <span class="field-hint" style="margin-top:-4px">These links appear in the Links widget for all users in your company.</span>
+          <div class="field-hint">These links appear in the Links widget for everyone in your company.</div>
           <div class="links-list" id="links-list"></div>
           <button class="add-link-btn" onclick="addLink()">+ Add link</button>
         </div>
       </div>
 
+      <!-- Notifications (full width) -->
+      <div class="card full" style="margin-bottom:24px">
+        <div class="card-header">📣 Send Notification</div>
+        <div class="card-body">
+          <div class="field-hint">Write a message to show as a notification to all your team members in the extension.</div>
+
+          <div id="active-notif-section" style="${activeNotif ? '' : 'display:none'}">
+            <div class="section-label">Active notification</div>
+            <div class="active-notif">
+              <div>
+                <div class="active-notif-text" id="active-notif-text">${esc(activeNotif?.message || '')}</div>
+                <div class="active-notif-meta" id="active-notif-meta">${activeNotif ? formatDate(activeNotif.created_at) : ''}</div>
+              </div>
+              <button class="clear-notif-btn" onclick="clearNotification()">Clear</button>
+            </div>
+          </div>
+
+          <div class="notif-compose">
+            <div class="section-label">${activeNotif ? 'Replace with new notification' : 'New notification'}</div>
+            <textarea id="notif-text" placeholder="e.g. Office closed on Friday. Enjoy your long weekend! 🎉" oninput="updateCharCount()" maxlength="280"></textarea>
+            <div class="notif-send-row">
+              <span class="char-count" id="char-count">0 / 280</span>
+              <button class="btn-secondary" id="send-notif-btn" onclick="sendNotification()">Send to team</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="actions">
-        <button class="btn-primary" id="save-btn" onclick="save()">Save changes</button>
+        <button class="btn-primary" id="save-btn" onclick="save()">Save settings</button>
       </div>
     `;
 
     renderLinks();
   }
 
+  // ── Links ─────────────────────────────────────────────
   function renderLinks() {
     const list = document.getElementById('links-list');
     if (!list) return;
     list.innerHTML = links.map((l, i) => `
-      <div class="link-row" id="link-${i}">
+      <div class="link-row">
         <input type="text" placeholder="Label" value="${esc(l.text || '')}" oninput="updateLink(${i},'text',this.value)" />
         <input type="url"  placeholder="https://…" value="${esc(l.link || '')}" oninput="updateLink(${i},'link',this.value)" />
         <button class="remove-btn" onclick="removeLink(${i})" title="Remove">×</button>
-      </div>
-    `).join('');
+      </div>`).join('');
   }
 
   function addLink() {
     links.push({ text: '', link: '' });
     renderLinks();
-    const rows = document.querySelectorAll('.link-row');
-    if (rows.length) rows[rows.length - 1].querySelector('input').focus();
+    const inputs = document.querySelectorAll('.link-row input');
+    if (inputs.length) inputs[inputs.length - 2].focus();
+  }
+  function removeLink(i)           { links.splice(i, 1); renderLinks(); }
+  function updateLink(i, key, val) { links[i][key] = val; }
+
+  // ── File upload ───────────────────────────────────────
+  function onLogoChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    logoFile = file;
+    const url = URL.createObjectURL(file);
+    document.getElementById('logo-preview').src = url;
+    document.getElementById('logo-preview-wrap').style.display = 'block';
+    document.getElementById('logo-upload-area').style.display = 'none';
   }
 
-  function removeLink(i) {
-    links.splice(i, 1);
-    renderLinks();
+  function onBgChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    bgFile = file;
+    const url = URL.createObjectURL(file);
+    document.getElementById('bg-preview').src = url;
+    document.getElementById('bg-preview-wrap').style.display = 'block';
+    document.getElementById('bg-upload-area').style.display = 'none';
   }
 
-  function updateLink(i, key, val) {
-    links[i][key] = val;
+  function clearLogo() {
+    logoFile = null;
+    companyData.logo_url = null;
+    document.getElementById('logo-preview-wrap').style.display = 'none';
+    document.getElementById('logo-upload-area').style.display = 'flex';
   }
 
-  function syncColor(source) {
-    const text = document.getElementById('f-accent-text');
-    const picker = document.getElementById('f-accent-color');
-    if (source === 'text') picker.value = text.value.startsWith('#') ? text.value : '#116682';
-    else text.value = picker.value;
+  function clearBg() {
+    bgFile = null;
+    companyData.background_url = null;
+    document.getElementById('bg-preview-wrap').style.display = 'none';
+    document.getElementById('bg-upload-area').style.display = 'flex';
   }
 
-  // ── Save ─────────────────────────────────────────────
+  async function uploadFile(file, path) {
+    const { error } = await db.storage.from(BUCKET).upload(path, file, { upsert: true, contentType: file.type });
+    if (error) throw error;
+    const { data } = db.storage.from(BUCKET).getPublicUrl(path);
+    return data.publicUrl;
+  }
+
+  // ── Notifications ─────────────────────────────────────
+  function updateCharCount() {
+    const val = document.getElementById('notif-text').value;
+    document.getElementById('char-count').textContent = `${val.length} / 280`;
+  }
+
+  async function sendNotification() {
+    const msg = document.getElementById('notif-text').value.trim();
+    if (!msg) return;
+    const btn = document.getElementById('send-notif-btn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+
+    // Deactivate any existing notifications
+    await db.from('notifications').update({ active: false }).eq('email_domain', companyData.email_domain);
+
+    const { data, error } = await db.from('notifications').insert({
+      email_domain: companyData.email_domain,
+      message: msg,
+      created_by: currentUser.email,
+      active: true,
+    }).select().single();
+
+    btn.disabled = false; btn.textContent = 'Send to team';
+
+    if (error) { showStatus('error', `Failed to send: ${error.message}`); return; }
+
+    activeNotif = data;
+    document.getElementById('notif-text').value = '';
+    updateCharCount();
+    document.getElementById('active-notif-text').textContent = data.message;
+    document.getElementById('active-notif-meta').textContent = formatDate(data.created_at);
+    document.getElementById('active-notif-section').style.display = 'block';
+    showStatus('success', 'Notification sent to your team.');
+  }
+
+  async function clearNotification() {
+    if (!activeNotif) return;
+    await db.from('notifications').update({ active: false }).eq('id', activeNotif.id);
+    activeNotif = null;
+    document.getElementById('active-notif-section').style.display = 'none';
+    showStatus('success', 'Notification cleared.');
+  }
+
+  // ── Save ──────────────────────────────────────────────
   async function save() {
     const btn = document.getElementById('save-btn');
-    btn.disabled = true;
-    btn.textContent = 'Saving…';
+    btn.disabled = true; btn.textContent = 'Saving…';
     hideStatus();
 
-    const payload = {
-      email_domain: companyData.email_domain,
-      name: document.getElementById('f-name').value.trim(),
-      logo_url: document.getElementById('f-logo').value.trim() || null,
-      accent_color: document.getElementById('f-accent-text').value.trim() || null,
-      background_url: document.getElementById('f-bg').value.trim() || null,
-      hide_sponsor_widget: document.getElementById('f-hide-sponsor').checked,
-      default_links: links.filter(l => l.text || l.link),
-      updated_at: new Date().toISOString(),
-    };
+    try {
+      let logoUrl = companyData.logo_url || null;
+      let bgUrl   = companyData.background_url || null;
 
-    const { error } = await db
-      .from('companies')
-      .upsert(payload, { onConflict: 'email_domain' });
+      if (logoFile) {
+        document.getElementById('logo-uploading').style.display = 'block';
+        const ext = logoFile.name.split('.').pop();
+        logoUrl = await uploadFile(logoFile, `${companyData.email_domain}/logo.${ext}`);
+        logoFile = null;
+        document.getElementById('logo-uploading').style.display = 'none';
+      }
 
-    btn.disabled = false;
-    btn.textContent = 'Save changes';
+      if (bgFile) {
+        document.getElementById('bg-uploading').style.display = 'block';
+        const ext = bgFile.name.split('.').pop();
+        bgUrl = await uploadFile(bgFile, `${companyData.email_domain}/background.${ext}`);
+        bgFile = null;
+        document.getElementById('bg-uploading').style.display = 'none';
+      }
 
-    if (error) {
-      showStatus('error', `Failed to save: ${error.message}`);
-    } else {
+      const payload = {
+        email_domain:        companyData.email_domain,
+        name:                document.getElementById('f-name').value.trim() || null,
+        logo_url:            logoUrl,
+        background_url:      bgUrl,
+        hide_sponsor_widget: document.getElementById('f-hide-sponsor').checked,
+        default_links:       links.filter(l => l.text || l.link),
+        updated_at:          new Date().toISOString(),
+      };
+
+      const { error } = await db.from('companies').upsert(payload, { onConflict: 'email_domain' });
+      if (error) throw error;
+
       companyData = { ...companyData, ...payload };
       showStatus('success', 'Settings saved successfully.');
+    } catch (e) {
+      showStatus('error', `Failed to save: ${e.message}`);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Save settings';
     }
   }
 
@@ -618,15 +749,15 @@
     bar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     if (type === 'success') setTimeout(hideStatus, 6000);
   }
-
   function hideStatus() {
     const bar = document.getElementById('status-bar');
-    bar.className = 'status-bar';
-    bar.textContent = '';
+    bar.className = 'status-bar'; bar.textContent = '';
   }
-
   function esc(str) {
     return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function formatDate(iso) {
+    return new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
   }
 
   boot();
