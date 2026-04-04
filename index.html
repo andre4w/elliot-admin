@@ -461,7 +461,13 @@
     companyData = companyRes.data || { email_domain: domain };
     links       = Array.isArray(companyData.default_links) ? companyData.default_links : [];
     activeNotif = notifRes.data?.[0] || null;
-    renderForm();
+    try {
+      renderForm();
+    } catch (e) {
+      console.error('renderForm failed:', e);
+      document.getElementById('company-form').innerHTML =
+        `<div class="no-company"><h2>Failed to render form</h2><p>${e.message}</p></div>`;
+    }
   }
 
   function renderNoCompany(msg) {
