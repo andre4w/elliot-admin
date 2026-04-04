@@ -539,20 +539,18 @@
           </div>
         </div>
 
-      </div>
-
-      <!-- Default Links (full width) -->
-      <div class="card full" style="margin-bottom:16px">
-        <div class="card-header">Default Links</div>
-        <div class="card-body">
-          <div class="field-hint">These links appear in the Links widget for everyone in your company.</div>
-          <div class="links-list" id="links-list"></div>
-          <button class="add-link-btn" onclick="addLink()">+ Add link</button>
+        <!-- Default Links -->
+        <div class="card">
+          <div class="card-header">Default Links</div>
+          <div class="card-body">
+            <div class="field-hint">These links appear in the Links widget for everyone in your company.</div>
+            <div class="links-list" id="links-list" style="max-height:200px;overflow-y:auto"></div>
+            <button class="add-link-btn" onclick="addLink()">+ Add link</button>
+          </div>
         </div>
-      </div>
 
-      <!-- Notifications (full width) -->
-      <div class="card full" style="margin-bottom:24px">
+        <!-- Notifications -->
+        <div class="card">
         <div class="card-header">📣 Send Notification</div>
         <div class="card-body">
           <div class="field-hint">Write a message to show as a notification to all your team members in the extension.</div>
@@ -577,7 +575,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div><!-- end settings-grid -->
 
       <div class="actions">
         <button class="btn-primary" id="save-btn" onclick="save()">Save settings</button>
