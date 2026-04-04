@@ -400,7 +400,7 @@
     btn.innerHTML = '<div class="spinner" style="border-color:#ddd;border-top-color:#116682"></div> Signing in…';
     await db.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: window.location.href },
+      options: { redirectTo: 'https://andre4w.github.io/elliot-admin' },
     });
   }
 
