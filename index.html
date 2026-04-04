@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Elliot for Water — Admin</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #116682;
+      --primary-dark: #0d4f64;
+      --primary-light: #bde9ff;
+      --surface: #f6fafd;
+      --surface-variant: #e4e9ec;
+      --on-surface: #171c1f;
+      --on-surface-variant: #40484c;
+      --outline: #c0c8cd;
+      --error: #ba1a1a;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--surface);
+      color: var(--on-surface);
+      min-height: 100vh;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Login ── */
+    #login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      background-image: linear-gradient(135deg, #0d4f64 0%, #116682 60%, #1a8aad 100%);
+    }
+
+    .login-card {
+      background: white;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .login-logo { font-size: 28px; font-weight: 700; color: var(--primary); letter-spacing: -0.5px; }
+    .login-logo span { color: #1a8aad; }
+    .login-subtitle { color: var(--on-surface-variant); font-size: 13px; text-align: center; }
+
+    .login-card h1 { font-size: 20px; font-weight: 600; margin-top: 4px; }
+
+    .google-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 20px;
+      border: 1.5px solid var(--outline);
+      border-radius: 100px;
+      background: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      width: 100%;
+      justify-content: center;
+      margin-top: 8px;
+      transition: background 0.15s, border-color 0.15s;
+      color: var(--on-surface);
+    }
+    .google-btn:hover { background: var(--surface); border-color: var(--primary); }
+    .google-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .google-btn svg { flex-shrink: 0; }
+
+    /* ── Layout ── */
+    #admin-screen { display: none; }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 0 32px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .header-brand { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .header-user { font-size: 13px; opacity: 0.85; }
+
+    .sign-out-btn {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: white;
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .sign-out-btn:hover { background: rgba(255,255,255,0.25); }
+
+    main {
+      max-width: 720px;
+      margin: 40px auto;
+      padding: 0 24px 80px;
+    }
+
+    .page-title { font-size: 22px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
+    .page-subtitle { color: var(--on-surface-variant); font-size: 13px; margin-bottom: 32px; }
+
+    /* ── Cards ── */
+    .card {
+      background: white;
+      border-radius: var(--radius);
+      border: 1px solid var(--outline);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--outline);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--primary);
+      background: #f0f8fc;
+    }
+
+    .card-body { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+    /* ── Form ── */
+    .field { display: flex; flex-direction: column; gap: 5px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--on-surface-variant); text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .field input[type="text"],
+    .field input[type="url"],
+    .field input[type="color"] {
+      border: 1.5px solid var(--outline);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      font-size: 14px;
+      color: var(--on-surface);
+      background: white;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .field input:focus { border-color: var(--primary); }
+
+    .field input[type="color"] {
+      padding: 4px 6px;
+      height: 38px;
+      cursor: pointer;
+    }
+
+    .color-row { display: flex; align-items: center; gap: 10px; }
+    .color-row input[type="text"] { flex: 1; }
+    .color-row input[type="color"] { width: 48px; flex-shrink: 0; }
+
+    .field-hint { font-size: 11px; color: var(--on-surface-variant); }
+
+    /* ── Toggle ── */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    .toggle-label { font-size: 14px; }
+    .toggle-desc { font-size: 12px; color: var(--on-surface-variant); margin-top: 2px; }
+
+    .toggle {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: var(--outline);
+      border-radius: 100px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      width: 18px; height: 18px;
+      left: 3px; top: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+    .toggle input:checked + .toggle-track { background: var(--primary); }
+    .toggle input:checked + .toggle-track::after { transform: translateX(20px); }
+
+    /* ── Links list ── */
+    .links-list { display: flex; flex-direction: column; gap: 8px; }
+
+    .link-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .link-row input {
+      border: 1.5px solid var(--outline);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%;
+    }
+    .link-row input:focus { border-color: var(--primary); }
+
+    .remove-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--on-surface-variant);
+      font-size: 18px;
+      line-height: 1;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.15s;
+    }
+    .remove-btn:hover { color: var(--error); }
+
+    .add-link-btn {
+      background: none;
+      border: 1.5px dashed var(--outline);
+      border-radius: var(--radius-sm);
+      color: var(--primary);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.15s, background 0.15s;
+      margin-top: 4px;
+    }
+    .add-link-btn:hover { border-color: var(--primary); background: #f0f8fc; }
+
+    /* ── Actions ── */
+    .actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 100px;
+      padding: 10px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ── Status ── */
+    .status-bar {
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+      margin-bottom: 16px;
+    }
+    .status-bar.success { display: block; background: #e6f4ea; color: #1e7e34; border: 1px solid #b2dfbc; }
+    .status-bar.error { display: block; background: #fdecea; color: var(--error); border: 1px solid #f5c6c8; }
+
+    /* ── No company ── */
+    .no-company {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--on-surface-variant);
+    }
+    .no-company h2 { font-size: 18px; margin-bottom: 8px; color: var(--on-surface); }
+    .no-company p { font-size: 13px; }
+
+    /* ── Spinner ── */
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      color: var(--on-surface-variant);
+    }
+    .loading-screen .spinner { border-color: var(--outline); border-top-color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen" class="loading-screen">
+  <div class="spinner"></div>
+  <span>Loading…</span>
+</div>
+
+<!-- Login -->
+<div id="login-screen" style="display:none">
+  <div class="login-card">
+    <div class="login-logo">elliot<span>forwater</span></div>
+    <h1>Company Admin</h1>
+    <p class="login-subtitle">Sign in with your company Google account to manage your organisation's settings.</p>
+    <button class="google-btn" id="google-btn" onclick="signIn()">
+      <svg width="18" height="18" viewBox="0 0 24 24">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Sign in with Google
+    </button>
+  </div>
+</div>
+
+<!-- Admin -->
+<div id="admin-screen" style="display:none">
+  <header>
+    <div class="header-brand">Elliot for Water — Admin</div>
+    <div class="header-right">
+      <span class="header-user" id="header-user"></span>
+      <button class="sign-out-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title" id="page-title">Company Settings</div>
+    <div class="page-subtitle" id="page-subtitle"></div>
+
+    <div id="status-bar" class="status-bar"></div>
+    <div id="company-form"></div>
+  </main>
+</div>
+
+<script>
+  const SUPABASE_URL = 'https://kkttgbsrsfoozetfxpau.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtrdHRnYnNyc2Zvb3pldGZ4cGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxMTA0MjYsImV4cCI6MjA5MDY4NjQyNn0.3G6VDnLQvJjGBQitaCPSH8Te3avlvGPirjwYYU3TLGg';
+
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true },
+  });
+
+  let currentUser = null;
+  let companyData = null;
+  let links = [];
+
+  // ── Screens ──────────────────────────────────────────
+  function show(id) {
+    ['loading-screen', 'login-screen', 'admin-screen'].forEach(s => {
+      document.getElementById(s).style.display = s === id ? (id === 'admin-screen' ? 'block' : 'flex') : 'none';
+    });
+    if (id === 'loading-screen') document.getElementById('loading-screen').style.display = 'flex';
+  }
+
+  // ── Auth ─────────────────────────────────────────────
+  async function signIn() {
+    const btn = document.getElementById('google-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<div class="spinner" style="border-color:#ddd;border-top-color:#116682"></div> Signing in…';
+    await db.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: window.location.href },
+    });
+  }
+
+  async function signOut() {
+    await db.auth.signOut();
+    currentUser = null;
+    companyData = null;
+    links = [];
+    show('login-screen');
+  }
+
+  // ── Boot ─────────────────────────────────────────────
+  async function boot() {
+    show('loading-screen');
+    const { data: { session } } = await db.auth.getSession();
+    if (session?.user) {
+      await loadAdmin(session.user);
+    } else {
+      show('login-screen');
+    }
+  }
+
+  db.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_IN' && session?.user && !currentUser) {
+      await loadAdmin(session.user);
+    } else if (event === 'SIGNED_OUT') {
+      show('login-screen');
+    }
+  });
+
+  // ── Load company ──────────────────────────────────────
+  async function loadAdmin(user) {
+    currentUser = user;
+    document.getElementById('header-user').textContent =
+      user.user_metadata?.full_name || user.email;
+    show('admin-screen');
+
+    const domain = user.email.split('@')[1];
+    document.getElementById('page-subtitle').textContent =
+      `Managing settings for @${domain}`;
+
+    const { data, error } = await db
+      .from('companies')
+      .select('*')
+      .eq('email_domain', domain)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      renderNoCompany(`Error loading company: ${error.message}`);
+      return;
+    }
+
+    companyData = data || { email_domain: domain };
+    links = Array.isArray(companyData.default_links) ? companyData.default_links : [];
+    renderForm();
+  }
+
+  function renderNoCompany(msg) {
+    document.getElementById('company-form').innerHTML = `
+      <div class="no-company">
+        <h2>No company found</h2>
+        <p>${msg || 'Your email domain is not associated with any company in the system.'}</p>
+      </div>`;
+  }
+
+  // ── Form ─────────────────────────────────────────────
+  function renderForm() {
+    const f = document.getElementById('company-form');
+    const c = companyData;
+
+    f.innerHTML = `
+      <!-- General -->
+      <div class="card">
+        <div class="card-header">General</div>
+        <div class="card-body">
+          <div class="field">
+            <label>Company Name</label>
+            <input type="text" id="f-name" value="${esc(c.name || '')}" placeholder="Acme Corp" />
+          </div>
+          <div class="field">
+            <label>Logo URL</label>
+            <input type="url" id="f-logo" value="${esc(c.logo_url || '')}" placeholder="https://example.com/logo.png" />
+            <span class="field-hint">Displayed in the extension header for your team.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appearance -->
+      <div class="card">
+        <div class="card-header">Appearance</div>
+        <div class="card-body">
+          <div class="field">
+            <label>Accent Color</label>
+            <div class="color-row">
+              <input type="text" id="f-accent-text" value="${esc(c.accent_color || '#116682')}" placeholder="#116682" oninput="syncColor('text')" />
+              <input type="color" id="f-accent-color" value="${esc(c.accent_color || '#116682')}" oninput="syncColor('picker')" />
+            </div>
+          </div>
+          <div class="field">
+            <label>Background Image URL</label>
+            <input type="url" id="f-bg" value="${esc(c.background_url || '')}" placeholder="https://example.com/background.jpg" />
+            <span class="field-hint">Overrides the default background for your team.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widgets -->
+      <div class="card">
+        <div class="card-header">Widgets</div>
+        <div class="card-body">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label">Hide Sponsor Widget</div>
+              <div class="toggle-desc">Remove the sponsor of the day widget for your team.</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="f-hide-sponsor" ${c.hide_sponsor_widget ? 'checked' : ''} />
+              <div class="toggle-track"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Default Links -->
+      <div class="card">
+        <div class="card-header">Default Links</div>
+        <div class="card-body">
+          <span class="field-hint" style="margin-top:-4px">These links appear in the Links widget for all users in your company.</span>
+          <div class="links-list" id="links-list"></div>
+          <button class="add-link-btn" onclick="addLink()">+ Add link</button>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn-primary" id="save-btn" onclick="save()">Save changes</button>
+      </div>
+    `;
+
+    renderLinks();
+  }
+
+  function renderLinks() {
+    const list = document.getElementById('links-list');
+    if (!list) return;
+    list.innerHTML = links.map((l, i) => `
+      <div class="link-row" id="link-${i}">
+        <input type="text" placeholder="Label" value="${esc(l.text || '')}" oninput="updateLink(${i},'text',this.value)" />
+        <input type="url"  placeholder="https://…" value="${esc(l.link || '')}" oninput="updateLink(${i},'link',this.value)" />
+        <button class="remove-btn" onclick="removeLink(${i})" title="Remove">×</button>
+      </div>
+    `).join('');
+  }
+
+  function addLink() {
+    links.push({ text: '', link: '' });
+    renderLinks();
+    const rows = document.querySelectorAll('.link-row');
+    if (rows.length) rows[rows.length - 1].querySelector('input').focus();
+  }
+
+  function removeLink(i) {
+    links.splice(i, 1);
+    renderLinks();
+  }
+
+  function updateLink(i, key, val) {
+    links[i][key] = val;
+  }
+
+  function syncColor(source) {
+    const text = document.getElementById('f-accent-text');
+    const picker = document.getElementById('f-accent-color');
+    if (source === 'text') picker.value = text.value.startsWith('#') ? text.value : '#116682';
+    else text.value = picker.value;
+  }
+
+  // ── Save ─────────────────────────────────────────────
+  async function save() {
+    const btn = document.getElementById('save-btn');
+    btn.disabled = true;
+    btn.textContent = 'Saving…';
+    hideStatus();
+
+    const payload = {
+      email_domain: companyData.email_domain,
+      name: document.getElementById('f-name').value.trim(),
+      logo_url: document.getElementById('f-logo').value.trim() || null,
+      accent_color: document.getElementById('f-accent-text').value.trim() || null,
+      background_url: document.getElementById('f-bg').value.trim() || null,
+      hide_sponsor_widget: document.getElementById('f-hide-sponsor').checked,
+      default_links: links.filter(l => l.text || l.link),
+      updated_at: new Date().toISOString(),
+    };
+
+    const { error } = await db
+      .from('companies')
+      .upsert(payload, { onConflict: 'email_domain' });
+
+    btn.disabled = false;
+    btn.textContent = 'Save changes';
+
+    if (error) {
+      showStatus('error', `Failed to save: ${error.message}`);
+    } else {
+      companyData = { ...companyData, ...payload };
+      showStatus('success', 'Settings saved successfully.');
+    }
+  }
+
+  // ── Helpers ───────────────────────────────────────────
+  function showStatus(type, msg) {
+    const bar = document.getElementById('status-bar');
+    bar.className = `status-bar ${type}`;
+    bar.textContent = msg;
+    bar.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (type === 'success') setTimeout(hideStatus, 4000);
+  }
+
+  function hideStatus() {
+    const bar = document.getElementById('status-bar');
+    bar.className = 'status-bar';
+    bar.textContent = '';
+  }
+
+  function esc(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  boot();
+</script>
+</body>
+</html>
