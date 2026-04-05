@@ -840,7 +840,7 @@
     const btn = event.target;
     btn.disabled = true; btn.textContent = 'Saving…';
     try {
-      const payload = { email_domain: companyData.email_domain,
+      const payload = { email_domain: companyData.email_domain, name: companyData.name || companyData.email_domain,
         default_links: links.filter(l => l.text || l.link), updated_at: new Date().toISOString() };
       const { error } = await db.from('companies').upsert(payload, { onConflict: 'email_domain' });
       if (error) throw error;
@@ -856,7 +856,7 @@
     const btn = event.target;
     btn.disabled = true; btn.textContent = 'Saving…';
     try {
-      const payload = { email_domain: companyData.email_domain,
+      const payload = { email_domain: companyData.email_domain, name: companyData.name || companyData.email_domain,
         hide_sponsor_widget: document.getElementById('f-hide-sponsor').checked,
         updated_at: new Date().toISOString() };
       const { error } = await db.from('companies').upsert(payload, { onConflict: 'email_domain' });
