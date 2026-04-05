@@ -823,7 +823,7 @@
 
       const payload = {
         email_domain: companyData.email_domain,
-        name: document.getElementById('f-name').value.trim() || null,
+        name: document.getElementById('f-name').value.trim() || companyData.name || companyData.email_domain,
         logo_url: logoUrl, background_url: bgUrl,
         updated_at: new Date().toISOString(),
       };
@@ -924,7 +924,7 @@
 
     const domain = currentUser.email.split('@')[1];
     const { data, error } = await db.from('profiles')
-      .select('*').eq('email_domain', domain).order('created_at', { ascending: false });
+      .select('*').ilike('email', `%@${domain}`).order('created_at', { ascending: false });
 
     if (error) {
       list.innerHTML = `<div class="empty-state">
