@@ -444,9 +444,6 @@
         <button class="nav-item" onclick="showSection('links')">
           <span class="nav-icon">🔗</span> Default Links
         </button>
-        <button class="nav-item" onclick="showSection('widgets')">
-          <span class="nav-icon">⚙️</span> Widgets
-        </button>
         <button class="nav-item" onclick="showSection('notifications')">
           <span class="nav-icon">📣</span> Notifications
         </button>
@@ -543,31 +540,6 @@
           <button class="add-link-btn" onclick="addLink()">+ Add a link</button>
           <div class="section-actions">
             <button class="btn-primary" onclick="saveLinks()">Save links</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- ── Widgets ── -->
-      <div id="section-widgets" class="section">
-        <div class="section-header">
-          <div class="section-title">Widgets</div>
-          <div class="section-subtitle">Control which widgets are visible to your team.</div>
-        </div>
-        <div class="section-body">
-          <div class="card">
-            <div class="toggle-row">
-              <div class="toggle-text">
-                <div class="tl">Hide Sponsor Widget</div>
-                <div class="td">Remove the sponsor of the day widget for your team.</div>
-              </div>
-              <label class="toggle">
-                <input type="checkbox" id="f-hide-sponsor" />
-                <div class="toggle-track"></div>
-              </label>
-            </div>
-          </div>
-          <div class="section-actions">
-            <button class="btn-primary" onclick="saveWidgets()">Save widgets</button>
           </div>
         </div>
       </div>
@@ -721,7 +693,6 @@
     const c = companyData;
 
     document.getElementById('f-name').value = c.name || '';
-    document.getElementById('f-hide-sponsor').checked = c.hide_sponsor_widget || false;
 
     if (c.logo_url) {
       document.getElementById('logo-preview').src = c.logo_url;
@@ -851,22 +822,6 @@
       showStatus('success', 'Links saved.');
     } catch(e) { showStatus('error', 'Failed: ' + e.message); }
     finally { btn.disabled = false; btn.textContent = 'Save links'; }
-  }
-
-  // ── Save: Widgets ─────────────────────────────────
-  async function saveWidgets() {
-    const btn = event.target;
-    btn.disabled = true; btn.textContent = 'Saving…';
-    try {
-      const payload = { email_domain: companyData.email_domain, name: companyData.name || companyData.email_domain,
-        hide_sponsor_widget: document.getElementById('f-hide-sponsor').checked,
-        updated_at: new Date().toISOString() };
-      const { error } = await db.from('companies').upsert(payload, { onConflict: 'email_domain' });
-      if (error) throw error;
-      Object.assign(companyData, payload);
-      showStatus('success', 'Widget settings saved.');
-    } catch(e) { showStatus('error', 'Failed: ' + e.message); }
-    finally { btn.disabled = false; btn.textContent = 'Save widgets'; }
   }
 
   // ── Notifications ─────────────────────────────────
