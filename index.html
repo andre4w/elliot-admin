@@ -40,7 +40,7 @@
     }
 
     /* ─── Login ────────────────────────────────────── */
-    #login-screen {
+    #login-screen, #not-registered-screen {
       min-height: 100vh;
       display: none; align-items: center; justify-content: center;
       background: linear-gradient(135deg, #0d4f64 0%, #116682 60%, #1a8aad 100%);
@@ -422,6 +422,16 @@
   </div>
 </div>
 
+<!-- Not registered -->
+<div id="not-registered-screen">
+  <div class="login-card">
+    <div class="login-logo">elliot<span>forwater</span></div>
+    <h1>Not registered</h1>
+    <p class="login-subtitle">Your organisation is not set up on Elliot for Water yet. Please contact us at <a href="mailto:hello@elliotforwater.com">hello@elliotforwater.com</a> to get started.</p>
+    <button class="google-btn" style="margin-top:16px;justify-content:center;background:transparent;border:1px solid var(--outline);color:var(--on-surface);box-shadow:none" onclick="signOut()">Sign out</button>
+  </div>
+</div>
+
 <!-- Admin -->
 <div id="admin-screen">
   <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -600,9 +610,10 @@
 
   // ── Screens ──────────────────────────────────────
   function show(id) {
-    document.getElementById('loading-screen').style.display = id === 'loading-screen' ? 'flex' : 'none';
-    document.getElementById('login-screen').style.display   = id === 'login-screen'   ? 'flex' : 'none';
-    document.getElementById('admin-screen').style.display   = id === 'admin-screen'   ? 'block' : 'none';
+    document.getElementById('loading-screen').style.display        = id === 'loading-screen'        ? 'flex'  : 'none';
+    document.getElementById('login-screen').style.display          = id === 'login-screen'          ? 'flex'  : 'none';
+    document.getElementById('not-registered-screen').style.display = id === 'not-registered-screen' ? 'flex'  : 'none';
+    document.getElementById('admin-screen').style.display          = id === 'admin-screen'          ? 'block' : 'none';
   }
 
   // ── Sidebar nav ───────────────────────────────────
@@ -673,7 +684,6 @@
     document.getElementById('user-name').textContent = name;
     document.getElementById('user-email').textContent = user.email;
     document.getElementById('sidebar-domain').textContent = '@' + domain;
-    show('admin-screen');
 
     const [companyRes, notifRes] = await Promise.all([
       db.from('companies').select('*').eq('email_domain', domain).single(),
@@ -681,10 +691,16 @@
         .order('created_at', { ascending: false }).limit(1),
     ]);
 
-    companyData = (companyRes.error?.code === 'PGRST116' ? null : companyRes.data) || { email_domain: domain };
+    if (!companyRes.data) {
+      show('not-registered-screen');
+      return;
+    }
+
+    companyData = companyRes.data;
     links = Array.isArray(companyData.default_links) ? companyData.default_links : [];
     activeNotif = notifRes.data?.[0] || null;
 
+    show('admin-screen');
     populateForm();
   }
 
